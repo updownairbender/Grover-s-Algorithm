@@ -7,5 +7,5 @@ name = "grovers-algorithm"
 version = "0.1.0"
 description = "Grover's Search Algorithm with Qiskit"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+packages = ["src"]
