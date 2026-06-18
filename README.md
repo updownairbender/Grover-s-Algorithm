@@ -69,31 +69,31 @@ python scripts/benchmark.py
 
 ## Architecture
 
-```python
-Grover-s-Algorithm/
+```text
+📦 Grover-s-Algorithm/
 │
-├── src/                       # Core implementation
-│   ├── oracle.py              # Dynamic phase oracle (any n, any marked state)
-│   ├── diffuser.py            # Generalized diffusion operator (n qubits)
-│   └── pipeline.py            # Build circuit, compute iterations, run sims
+├── 📂 src/                       # Core implementation
+│   ├── 🐍 oracle.py              # Dynamic phase oracle
+│   ├── 🐍 diffuser.py            # Generalized diffusion operator
+│   └── 🐍 pipeline.py            # Build circuit, compute iterations
 │
-├── tests/
-│   └── test_circuits.py       # pytest: oracle, diffuser, full pipeline
+├── 📂 tests/
+│   └── 🧪 test_circuits.py       # pytest: oracle, diffuser, full pipeline
 │
-├── scripts/
-│   └── benchmark.py           # Scalability analysis (depth, gates, time vs n)
+├── 📂 scripts/
+│   └── 📈 benchmark.py           # Scalability analysis
 │
-├── notebooks/
-│   └── demonstration.ipynb    # Interactive walkthrough
+├── 📂 notebooks/
+│   └── 📓 demonstration.ipynb    # Interactive walkthrough
 │
-├── .github/workflows/
-│   └── pytest.yml             # CI/CD: lint + test on every push
+├── 📂 .github/workflows/
+│   └── ⚙️ pytest.yml             # CI/CD: lint + test on every push
 │
-├── main.py                    # CLI entry point
-├── requirements.txt           # Single-command install
-├── pyproject.toml             # Package metadata & build config
-├── .gitignore                 # venv, cache, outputs, IDE
-└── README.md
+├── 🚀 main.py                    # CLI entry point
+├── 📝 requirements.txt           # Single-command install
+├── 🛠️ pyproject.toml             # Package metadata & build config
+├── 🙈 .gitignore                 # venv, cache, outputs, IDE
+└── 📖 README.md
 ```
 
 </br>
