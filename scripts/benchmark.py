@@ -1,5 +1,15 @@
+"""Scalability benchmark for Grover's algorithm.
+
+Sweeps n=2-10 qubits, measures circuit depth, gate counts,
+and execution time for each configuration. Saves depth and
+time plots to outputs/.
+"""
+
+import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/ is not on sys.path; src/ is only findable from project root
 
 import matplotlib.pyplot as plt
 from qiskit_aer import AerSimulator
@@ -49,6 +59,28 @@ def plot_benchmark(results: list[dict], title: str, ylabel: str, filepath: str) 
     plt.close(fig)
 
 
+def plot_gate_benchmark(results: list[dict], filepath: str) -> None:
+    """Plot total gates and CX gates vs. qubits."""
+    xs = [r["num_qubits"] for r in results]
+    totals = [r["total_gates"] for r in results]
+    cxs = [r["cx_gates"] for r in results]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(xs, totals, "o-", label="Total Gates", color="#3498db", linewidth=2, markersize=6)
+    ax.plot(xs, cxs, "s--", label="CX Gates (Part of total gates)", color="#e74c3c", linewidth=2, markersize=6)
+    ax.set_xlabel("Number of Qubits (n)")
+    ax.set_ylabel("Gate Count")
+    ax.set_title("Grover's Algorithm - Gate Counts vs. Qubits")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(filepath, dpi=150)
+    print(f"  Plot saved: {filepath}")
+    plt.close(fig)
+
+
 def main() -> None:
     print()
     print("=" * 60)
@@ -58,10 +90,12 @@ def main() -> None:
 
     depth_results = []
     time_results = []
+    info_list = []
 
     for n in SWEEP_QUBITS:
         marked = "1" * n
         info = measure_circuit_stats(n, marked)
+        info_list.append(info)
         circuit = build_grover_circuit(n, marked)
         elapsed = measure_execution_time(circuit)
 
@@ -88,6 +122,8 @@ def main() -> None:
         f"Execution Time (s) - {SHOTS_PER_POINT} shots",
         "outputs/benchmark_time.png",
     )
+    # Needs a dual-line plot (total vs CX); single-line plot_benchmark() won't do this
+    plot_gate_benchmark(info_list, "outputs/benchmark_gates.png")
 
     print()
     print("  Done. Plots saved to outputs/.")
