@@ -1,34 +1,33 @@
-# Grover's Search Algorithm - Scalable, Noise-Aware Implementation
+# Grover's Search Algorithm
 
-[![Tests](https://github.com/mahmo/grovers-search-scaled/actions/workflows/pytest.yml/badge.svg)](https://github.com/mahmo/grovers-search-scaled/actions/workflows/pytest.yml)
+Scalable, Noise-Aware Implementation
+
+[![Tests](https://github.com/updownairbender/grover-s-algorithm/actions/workflows/pytest.yml/badge.svg)](https://github.com/updownairbender/grover-s-algorithm/actions/workflows/pytest.yml)
 
 A **production-grade**, scalable implementation of Grover's quantum search algorithm with dynamic oracle synthesis, noise simulation, and amplitude amplification visualization.
 
-```
+```cmd
 > python main.py --qubits 4 --search 1101 --noise --save-plot outputs/histogram.png
 ```
-
----
 
 ## Overview
 
 Grover's algorithm searches an unsorted database of $N = 2^n$ items in $O(\sqrt{N})$ quantum queries - a **quadratic speedup** over the classical $O(N)$.
 
-This implementation goes beyond a textbook 2-qubit example:
+### Properties
 
 - **Dynamic oracle** - specify *any* binary marked state; the circuit adapts
 - **Scalable diffuser** - generalized inversion-about-the-mean for $n$ qubits
 - **Optimal iteration calculator** - automatically computes $R \approx \frac{\pi}{4}\sqrt{\frac{2^n}{M}}$
 - **Noise simulation** - depolarizing gate errors + readout errors on a realistic backend
+- **Multi-state search** - search for $M$ marked states simultaneously via `--search "001,110"`
 - **Circuit visualization** - text diagrams, probability histograms, scalability benchmarks
-
----
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/mahmo/grovers-search-scaled.git
-cd grovers-search-scaled
+git clone https://github.com/updownairbender/Grover-s-Algorithm.git
+cd Grover-s-Algorithm
 pip install -r requirements.txt
 ```
 
@@ -41,8 +40,11 @@ python main.py --qubits 4 --search 1101
 # Same search with noise simulation
 python main.py --qubits 4 --search 1101 --noise
 
-# Save the histogram plot and circuit diagram
-python main.py --qubits 5 --search 10101 --save-plot outputs/histogram.png --save-circuit outputs/circuit.txt
+# Save the histogram plot and circuit diagram (PNG via matplotlib)
+python main.py --qubits 5 --search 10101 --save-plot outputs/histogram.png --save-circuit outputs/circuit.png
+
+# Multi-state search: find |000> and |111> simultaneously
+python main.py --qubits 3 --search "000,111"
 ```
 
 ### Run the Notebook
@@ -63,11 +65,11 @@ pytest tests/ -v
 python scripts/benchmark.py
 ```
 
----
+</br>
 
 ## Architecture
 
-```
+```python
 grovers-search-scaled/
 │
 ├── src/                       # Core implementation
@@ -89,10 +91,12 @@ grovers-search-scaled/
 │
 ├── main.py                    # CLI entry point
 ├── requirements.txt           # Single-command install
+├── pyproject.toml             # Package metadata & build config
+├── .gitignore                 # venv, cache, outputs, IDE
 └── README.md
 ```
 
----
+</br>
 
 ## Mathematical Background
 
@@ -114,51 +118,57 @@ After each oracle-diffuser pair, the amplitude of $|\omega\rangle$ grows by appr
 
 ### Optimal Iterations
 
-$$R = \left\lfloor\frac{\pi}{4}\sqrt{\frac{N}{M}}\right\rceil$$
+Let $\theta = \arcsin(\sqrt{M/N})$. The code computes the exact number of iterations:
 
-Where $N = 2^n$ and $M$ is the number of marked states. This maximizes the success probability.
+$$R = \left\lfloor\frac{\pi/2 - \theta}{2\theta}\right\rceil$$
+
+For $M \ll N$, this reduces to the familiar approximation:
+
+$$R \approx \frac{\pi}{4}\sqrt{\frac{N}{M}}$$
+
+Where $N = 2^n$ and $M$ is the number of marked states.
+
+The code uses the exact formula because the approximation can be off by 1 for small systems. For example, $n=2$, $M=1$ ($N=4$): the exact formula gives $R=1$, while the approximation yields $\pi/4 \cdot \sqrt{4} \approx 1.57 \to 2$ — that extra iteration overshoots the optimum and lowers success probability. The exact formula guarantees correctness for any $n$ and $M$.
 
 ### Geometric Interpretation
 
 The algorithm iterates the state vector through a 2D subspace spanned by $|\omega\rangle$ (marked) and $|\omega^\perp\rangle$ (unmarked). Each Grover iteration rotates the vector by $2\theta$, where $\sin\theta = \sqrt{M/N}$.
 
----
-
 ## Results
 
-### 4-Qubit Search for |1101> (Ideal)
+### 3-Qubit Search for |101> (Ideal)
 
-```
+```txt
   Measurement Results (Ideal Simulator):
     State     Probability
   --------   ------------
-      1101       85.23%   <- marked
-      0110        1.02%
-      1010        0.95%
-      1110        0.92%
-      0101        0.83%
+       101       94.75%   <- marked
+       100        0.81%
+       110        0.79%
+       001        0.74%
+       010        0.74%
 ```
 
 ### Amplitude Amplification
 
-```
-  n=4, searching |1101>
-  Iters=0  →  p=6.25%  (uniform superposition)
-  Iters=1  →  p=18.75%
-  Iters=2  →  p=76.56%
-  Iters=3  →  p=85.23%  <- optimal
-  Iters=4  →  p=47.66%  (overshoot)
+```txt
+  n=3, searching |101>
+  Iters=0  ->  p=13.2%   (expected 12.5%, uniform)
+  Iters=1  ->  p=77.6%   (expected 78.1%)
+  Iters=2  ->  p=94.8%   <- optimal (expected 94.5%)
+  Iters=3  ->  p=33.0%   (expected 33.0%, overshoot)
+  Iters=4  ->  p=1.3%    (expected 1.2%)
 ```
 
 ### Noise Degradation
 
-| Metric | Ideal | Noisy (1% 2q, 2% readout) |
-|---|---|---|
-| Marked state prob | 85.2% | 62.1% |
+| Metric | Ideal | Noisy (1% 1q, 1% 2q, 2% readout) |
+|----|----|----|
+| Marked state prob | 94.5% | 71.2% |
 | Correct ranking | ✅ | ✅ |
-| Circuit depth | 28 | 28 |
+| Circuit depth | 14 | 14 |
 
----
+</br>
 
 ## Project Status
 
@@ -166,19 +176,17 @@ The algorithm iterates the state vector through a 2D subspace spanned by $|\omeg
 |---|---|
 | Dynamic Oracle | ✅ |
 | Scalable Diffuser | ✅ |
+| Multi-State Search (M marked states) | ✅ |
 | Optimal Iteration Calculator | ✅ |
 | Ideal Simulation | ✅ |
 | Noise Simulation (depolarizing + readout) | ✅ |
 | CLI with argparse | ✅ |
 | Probability Histograms | ✅ |
-| Circuit Diagram Export | ✅ |
+| Circuit Diagram Export (PNG + text) | ✅ |
 | Unit Tests (pytest) | ✅ |
 | CI/CD (GitHub Actions) | ✅ |
 | Scalability Benchmark | ✅ |
 | Jupyter Notebook | ✅ |
-| PEP 8 Compliance | ✅ |
-
----
 
 ## License
 
