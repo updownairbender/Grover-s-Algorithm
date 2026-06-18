@@ -70,7 +70,7 @@ python scripts/benchmark.py
 ## Architecture
 
 ```python
-grovers-search-scaled/
+Grover-s-Algorithm/
 │
 ├── src/                       # Core implementation
 │   ├── oracle.py              # Dynamic phase oracle (any n, any marked state)
