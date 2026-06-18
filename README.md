@@ -73,15 +73,15 @@ python scripts/benchmark.py
 📦 Grover-s-Algorithm/
 │
 ├── 📂 src/                       # Core implementation
-│   ├── 🐍 oracle.py              # Dynamic phase oracle
-│   ├── 🐍 diffuser.py            # Generalized diffusion operator
-│   └── 🐍 pipeline.py            # Build circuit, compute iterations
+│   ├── 📄 oracle.py              # Dynamic phase oracle (any n, any marked state)
+│   ├── 📄 diffuser.py            # Generalized diffusion operator (n qubits)
+│   └── 📄 pipeline.py            # Build circuit, compute iterations, run sims
 │
 ├── 📂 tests/
 │   └── 🧪 test_circuits.py       # pytest: oracle, diffuser, full pipeline
 │
 ├── 📂 scripts/
-│   └── 📈 benchmark.py           # Scalability analysis
+│   └── 📈 benchmark.py           # Scalability analysis (depth, gates, time vs n)
 │
 ├── 📂 notebooks/
 │   └── 📓 demonstration.ipynb    # Interactive walkthrough
@@ -90,7 +90,7 @@ python scripts/benchmark.py
 │   └── ⚙️ pytest.yml             # CI/CD: lint + test on every push
 │
 ├── 🚀 main.py                    # CLI entry point
-├── 📝 requirements.txt           # Single-command install
+├── 📄 requirements.txt           # Single-command install
 ├── 🛠️ pyproject.toml             # Package metadata & build config
 ├── 🙈 .gitignore                 # venv, cache, outputs, IDE
 └── 📖 README.md
