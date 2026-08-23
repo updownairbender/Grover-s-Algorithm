@@ -2,7 +2,7 @@
 
 Scalable, Noise-Aware Implementation
 
-[![Tests](https://github.com/updownairbender/grover-s-algorithm/actions/workflows/pytest.yml/badge.svg)](https://github.com/updownairbender/grover-s-algorithm/actions/workflows/pytest.yml)
+[![Tests](https://github.com/mahmoud-a-shalaby/grover-s-algorithm/actions/workflows/pytest.yml/badge.svg)](https://github.com/mahmoud-a-shalaby/grover-s-algorithm/actions/workflows/pytest.yml)
 
 A **production-grade**, scalable implementation of Grover's quantum search algorithm with dynamic oracle synthesis, noise simulation, and amplitude amplification visualization.
 
@@ -26,7 +26,7 @@ Grover's algorithm searches an unsorted database of $N = 2^n$ items in $O(\sqrt{
 ## Quick Start
 
 ```bash
-git clone https://github.com/updownairbender/Grover-s-Algorithm.git
+git clone https://github.com/mahmoud-a-shalaby/Grover-s-Algorithm.git
 cd Grover-s-Algorithm
 pip install -r requirements.txt
 ```
